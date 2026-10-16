@@ -740,7 +740,7 @@ async def start_delete_movie(message: types.Message, state: FSMContext):
 async def process_delete_movie(message: types.Message, state: FSMContext):
     code = parse_int(message.text)
 
-   if code is None:
+if code is None:
         await message.answer("❌ Kod faqat raqam bo'lishi kerak (juda uzun bo'lmasin).")
         return
 
