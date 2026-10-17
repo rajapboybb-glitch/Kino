@@ -65,29 +65,38 @@ def get_connection():
 def init_db():
     parent = Path(DB_PATH).parent
     parent.mkdir(parents=True, exist_ok=True)
-    with closing_conn := get_connection():
-        closing_conn.execute("""
+    conn = get_connection()
+    try:
+        conn.execute("""
             CREATE TABLE IF NOT EXISTS movies (
                 code INTEGER PRIMARY KEY,
                 file_id TEXT NOT NULL,
                 caption TEXT NOT NULL DEFAULT ''
             )
         """)
-        closing_conn.execute("""
+        conn.execute("""
             CREATE TABLE IF NOT EXISTS users (
                 user_id INTEGER PRIMARY KEY
             )
         """)
-        closing_conn.commit()
+        conn.commit()
+    finally:
+        conn.close()
 
 def db_add_user(user_id: int):
-    with conn := get_connection():
+    conn = get_connection()
+    try:
         conn.execute("INSERT OR IGNORE INTO users (user_id) VALUES (?)", (user_id,))
         conn.commit()
+    finally:
+        conn.close()
 
 def db_get_movie(code: int):
-    with conn := get_connection():
+    conn = get_connection()
+    try:
         row = conn.execute("SELECT file_id, caption FROM movies WHERE code = ?", (code,)).fetchone()
+    finally:
+        conn.close()
     if not row:
         return None
     return row["file_id"], row["caption"]
