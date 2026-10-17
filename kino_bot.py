@@ -743,7 +743,6 @@ async def process_delete_movie(message: types.Message, state: FSMContext):
 if code is None:
         await message.answer("❌ Kod faqat raqam bo'lishi kerak (juda uzun bo'lmasin).")
         return
-
     try:
         deleted = await run_db(db_delete_movie, code)
     except sqlite3.Error:
